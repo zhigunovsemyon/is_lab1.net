@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "is_lab1.net": {
+      "commandName": "Project",
+      "commandLineArgs": "d d d d"
+    }
+  }
+}
