@@ -11,57 +11,57 @@
  * 2-я ступень: шифрующие таблицы с двойной перестановкой по ключу
  * Алфавит: 35 символов (А…Я, пробел, «.» )
  */
-internal class Program
+internal static class Program
 {
-	const int EXIT_SUCCESS = 0;
-	const int EXIT_FAILURE = -1;
+	private const int ExitSuccess = 0;
+	private const int ExitFailure = -1;
 
-	static int Main()
+	private static int Main()
 	{
 		var args = Environment.GetCommandLineArgs();
 		var execname = args[0];
 		if (args.Length != 5) {
 			Program.Usage(execname);
-			return EXIT_FAILURE;
+			return ExitFailure;
 		}
 
 		var modename = args[1];
-		var input_file = args[2];
-		var key_file = args[3];
-		var output_file = args[4];
+		var inputFile = args[2];
+		var keyFile = args[3];
+		var outputFile = args[4];
 
 		var mode = Program.GetMode(modename);
 		if (mode == Mode.INVALID_MODE) {
 			Console.WriteLine("{0} не является действующим режимом", modename);
 			Program.Usage(execname);
-			return EXIT_FAILURE;
+			return ExitFailure;
 		}
 
-		var readFileReturn = Program.ReadFile(input_file);
+		var readFileReturn = Program.ReadFile(inputFile);
 		if (!readFileReturn.IsValid) {
-			Program.DisplayFileError(input_file, readFileReturn.Error);
-			return EXIT_FAILURE;
+			Program.DisplayFileError(inputFile, readFileReturn.Error);
+			return ExitFailure;
 		}
 		var inputFileContent = readFileReturn.Value ?? "";
 
-		var keyFileReturn = Program.ReadFile(input_file);
+		var keyFileReturn = Program.ReadFile(inputFile);
 		if (!keyFileReturn.IsValid) {
-			Program.DisplayFileError(key_file, keyFileReturn.Error);
-			return EXIT_FAILURE;
+			Program.DisplayFileError(keyFile, keyFileReturn.Error);
+			return ExitFailure;
 		}
 		var keyFileContent = keyFileReturn.Value ?? "";
 
 		Console.WriteLine("Входной файл:\n{0}", inputFileContent);
 		Console.WriteLine("Ключ:\n{0}", keyFileContent);
-		return EXIT_SUCCESS;
+		return ExitSuccess;
 	}
 
-	static void Usage(string execname)
+	private static void Usage(string execname)
 	{
 		Console.WriteLine("{0} (d|e) input_file key_file output_file", execname);
 	}
 
-	static Mode GetMode(string modename)
+	private static Mode GetMode(string modename)
 	{
 		if (modename.Length != 1) {
 			return Mode.INVALID_MODE;
@@ -76,7 +76,7 @@ internal class Program
 		};
 	}
 
-	static Result<string, Exception> ReadFile(string path)
+	private static Result<string, Exception> ReadFile(string path)
 	{
 		try {
 			using var sr = new StreamReader(path);
@@ -88,7 +88,7 @@ internal class Program
 		}
 	}
 
-	static void DisplayFileError(string path, Exception? exception)
+	private static void DisplayFileError(string path, Exception? exception)
 	{
 		Console.WriteLine("Ошибка при чтении файла {0}:", path);
 		while (exception != null) {
