@@ -1,12 +1,12 @@
 ﻿namespace is_lab1.net;
 
-public class Result<T,Err>
+public class Result<T,TErr>
 {
 	public bool IsValid { get; init; }
 
 	public T? Value { get; init; }
 
-	public Err? Error { get; init; }
+	public TErr? Error { get; init; }
 
 	private Result(T result)
 	{
@@ -14,13 +14,13 @@ public class Result<T,Err>
 		this.Value = result;
 	}
 
-	private Result(Err error)
+	private Result(TErr error)
 	{
 		this.IsValid = false;
 		this.Error = error;
 	}
 
-	public static Result<T, Err> CreateSuccess(T result) => new (result);
+	public static Result<T, TErr> CreateSuccess(T result) => new (result);
 
-	public static Result<T, Err> CreateFailure(Err error) => new (error);
+	public static Result<T, TErr> CreateFailure(TErr error) => new (error);
 }

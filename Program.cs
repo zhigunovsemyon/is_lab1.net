@@ -31,7 +31,7 @@ internal static class Program
 		var outputFile = args[4];
 
 		var mode = Program.GetMode(modename);
-		if (mode == Mode.INVALID_MODE) {
+		if (mode == Mode.InvalidMode) {
 			Console.WriteLine("{0} не является действующим режимом", modename);
 			Program.Usage(execname);
 			return ExitFailure;
@@ -64,15 +64,15 @@ internal static class Program
 	private static Mode GetMode(string modename)
 	{
 		if (modename.Length != 1) {
-			return Mode.INVALID_MODE;
+			return Mode.InvalidMode;
 		}
 
 		char modechar = modename[0];
 		return modechar switch
 		{
-			'd' or 'D' => Mode.DECRYPT_MODE,
-			'e' or 'E' => Mode.ENCRYPT_MODE,
-			_ => Mode.INVALID_MODE,
+			'd' or 'D' => Mode.DecryptMode,
+			'e' or 'E' => Mode.EncryptMode,
+			_ => Mode.InvalidMode,
 		};
 	}
 
