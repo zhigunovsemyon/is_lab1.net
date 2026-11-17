@@ -1,14 +1,16 @@
 ﻿namespace is_lab1.net;
 using LabExceptions;
+using System.Text;
 
 public class CipherClass
 {
+	private readonly String _alphabet;
 	private readonly CaesarCipher _caesar;
 
-	public CipherClass(string keyString)
+	public CipherClass(string keyString, string alphabet)
 	{
 		// числоЦезаря слово цифры
-		var words = keyString.Split((char[]?)null,StringSplitOptions.RemoveEmptyEntries);
+		var words = keyString.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries);
 		if (words.Length != 3) {
 			throw new BadKeyException("Неправильный формат ключа! Ключ: " + keyString);
 		}
@@ -18,7 +20,8 @@ public class CipherClass
 			throw new BadKeyException(msg);
 		}
 
-		_caesar = new(caesarNum);
+		_caesar = new(caesarNum, alphabet);
+		_alphabet = alphabet;
 	}
 
 	public string Encrypt(string plaintext)
