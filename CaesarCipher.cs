@@ -19,7 +19,7 @@ public class CaesarCipher(Byte shift, String alphabet)
 
 	private string VerifyAndNormalizePlaintext (string text)
 	{
-		var upperCaseText = text.ToUpper();
+		var upperCaseText = text.ToUpper().ReplaceLineEndings(" ");
 		foreach (char c in upperCaseText) {
 			if (!_alphabet.Contains(c)) {
 				// разработать класс исключений, переделать под Result
