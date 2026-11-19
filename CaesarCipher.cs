@@ -46,7 +46,7 @@ public class CaesarCipher(Byte shift, String alphabet)
 	{
 		var sb = new StringBuilder(bytes.Count());
 		var chars = bytes.Select(code => 
-			_alphabet.Where(e => (e.Item2 == code)).First().Item1 
+			_alphabet.First(e => (e.Item2 == code)).Item1 
 		);
 		foreach (var c in chars) {
 			sb.Append(c);
