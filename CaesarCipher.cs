@@ -1,56 +1,41 @@
 ﻿namespace is_lab1.net;
-using System.Text;
 using is_lab1.net.LabExceptions;
+using System.Text;
 
 public class CaesarCipher(Byte shift, String alphabet)
 {
 	private readonly string _alphabet = alphabet.ToUpper();
 	private readonly Byte _shift = (Byte)(shift % alphabet.Length);
-
-	public Byte[] Encrypt (string plaintext)
+	
+	public string Encrypt (String plaintext)
 	{
-		var normalizedText = VerifyAndConvertPlaintext(plaintext);
-		return normalizedText;
-		throw new NotImplementedException();
+		return CaesarTransform(VerifyString(plaintext), _shift);
 	}
 
-	public string Decrypt (IEnumerable<Byte> ciphertext)
+	public string Decrypt (String ciphertext)
 	{
-		return BuildStringFromBytes(ciphertext);
-		throw new NotImplementedException();
+		var reverseShift = (Byte)((_alphabet.Length - _shift) % _alphabet.Length);
+		return CaesarTransform(ciphertext, reverseShift);
 	}
 
-	private Byte[] VerifyAndConvertPlaintext (string text)
+	private string CaesarTransform (String text, Byte shift)
 	{
-		var upperCaseText = text.ToUpper().ReplaceLineEndings(" ");
-		var ret = new List<Byte>(text.Length);
-
-		foreach (char c in upperCaseText) {
-			Boolean charFound = false;
-			for (Byte i = 0; i < _alphabet.Length; i++) { 
-				var ac = _alphabet[i];
-				if (c == ac) {
-					charFound = true;
-					ret.Add(i);
-					break;
-				}
-			}
-			if (!charFound) {
-				//TODO: свой класс исключений, мб переделать под резалт
-				throw new NotImplementedException();
-			}
-		}
-		return [..ret];
-	}
-
-	private string BuildStringFromBytes (IEnumerable<Byte> bytes)
-	{
-		var sb = new StringBuilder(bytes.Count());
-		var x = _alphabet[0];
-		var chars = bytes.Select(code => _alphabet[code]);
-		foreach (var c in chars) {
-			sb.Append(c);
+		var sb = new StringBuilder(text.Length);
+		foreach (char c in text) {
+			int idx = _alphabet.IndexOf(c);
+			sb.Append(_alphabet[(idx + shift) % _alphabet.Length]);
 		}
 		return sb.ToString();
+	}
+
+	private string VerifyString(String text)
+	{
+		var upperCaseText = text.ToUpper().ReplaceLineEndings(" ");
+		var invalidChars = upperCaseText.Where(c => !_alphabet.Contains(c));
+		if (invalidChars.Any()) {
+			//todo: свой класс исключений
+			throw new Exception($"Строка {upperCaseText} содержит неподдерживаемые символы");
+		}
+		return upperCaseText;
 	}
 }
