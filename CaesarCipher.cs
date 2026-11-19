@@ -1,20 +1,22 @@
 ﻿namespace is_lab1.net;
+using System.Text;
 using is_lab1.net.LabExceptions;
-using static System.Net.Mime.MediaTypeNames;
 
 public class CaesarCipher(Byte shift, String alphabet)
 {
 	private readonly (Char, Byte)[] _alphabet = EnumerateAlphabet(alphabet);
 	private readonly Byte _shift = (Byte)(shift % alphabet.Length);
 
-	public string Encrypt (string plaintext)
+	public Byte[] Encrypt (string plaintext)
 	{
 		var normalizedText = VerifyAndConvertPlaintext(plaintext);
+		return normalizedText;
 		throw new NotImplementedException();
 	}
 
-	public string Decrypt (string ciphertext)
+	public string Decrypt (IEnumerable<Byte> ciphertext)
 	{
+		return BuildStringFromBytes(ciphertext);
 		throw new NotImplementedException();
 	}
 
@@ -38,6 +40,18 @@ public class CaesarCipher(Byte shift, String alphabet)
 			}
 		}
 		return [..ret];
+	}
+
+	private string BuildStringFromBytes (IEnumerable<Byte> bytes)
+	{
+		var sb = new StringBuilder(bytes.Count());
+		var chars = bytes.Select(code => 
+			_alphabet.Where(e => (e.Item2 == code)).First().Item1 
+		);
+		foreach (var c in chars) {
+			sb.Append(c);
+		}
+		return sb.ToString();
 	}
 
 	private static (Char, Byte)[] EnumerateAlphabet (String alphabet) 
