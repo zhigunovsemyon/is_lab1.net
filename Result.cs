@@ -23,4 +23,10 @@ public class Result<T,TErr>
 	public static Result<T, TErr> CreateSuccess(T result) => new (result);
 
 	public static Result<T, TErr> CreateFailure(TErr error) => new (error);
+
+	public static bool operator false (Result<T,TErr> r) => !r.IsValid;
+	
+	public static bool operator ! (Result<T,TErr> r) => !r.IsValid;
+
+	public static bool operator true (Result<T,TErr> r) => r.IsValid;
 }

@@ -38,14 +38,14 @@ internal static class Program
 		}
 
 		var readFileReturn = Program.ReadFile(inputFile);
-		if (!readFileReturn.IsValid) {
+		if (!readFileReturn) {
 			Program.DisplayFileError(inputFile, readFileReturn.Error);
 			return ExitFailure;
 		}
 		var inputFileContent = readFileReturn.Value ?? "";
 
 		var keyFileReturn = Program.ReadFile(inputFile);
-		if (!keyFileReturn.IsValid) {
+		if (!keyFileReturn) {
 			Program.DisplayFileError(keyFile, keyFileReturn.Error);
 			return ExitFailure;
 		}
