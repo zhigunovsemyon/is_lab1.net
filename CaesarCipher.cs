@@ -4,7 +4,7 @@ using is_lab1.net.LabExceptions;
 
 public class CaesarCipher(Byte shift, String alphabet)
 {
-	private readonly (Char, Byte)[] _alphabet = EnumerateAlphabet(alphabet);
+	private readonly string _alphabet = alphabet.ToUpper();
 	private readonly Byte _shift = (Byte)(shift % alphabet.Length);
 
 	public Byte[] Encrypt (string plaintext)
@@ -27,10 +27,11 @@ public class CaesarCipher(Byte shift, String alphabet)
 
 		foreach (char c in upperCaseText) {
 			Boolean charFound = false;
-			foreach ((var ac, var idx) in _alphabet) {
+			for (Byte i = 0; i < _alphabet.Length; i++) { 
+				var ac = _alphabet[i];
 				if (c == ac) {
 					charFound = true;
-					ret.Add(idx);
+					ret.Add(i);
 					break;
 				}
 			}
@@ -45,18 +46,11 @@ public class CaesarCipher(Byte shift, String alphabet)
 	private string BuildStringFromBytes (IEnumerable<Byte> bytes)
 	{
 		var sb = new StringBuilder(bytes.Count());
-		var chars = bytes.Select(code => 
-			_alphabet.First(e => (e.Item2 == code)).Item1 
-		);
+		var x = _alphabet[0];
+		var chars = bytes.Select(code => _alphabet[code]);
 		foreach (var c in chars) {
 			sb.Append(c);
 		}
 		return sb.ToString();
 	}
-
-	private static (Char, Byte)[] EnumerateAlphabet (String alphabet) 
-		=> alphabet
-			.ToUpper()
-			.Select((c, i) => (c, (Byte)(i + 1)))
-			.ToArray();
 }
