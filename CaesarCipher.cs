@@ -7,9 +7,15 @@ public class CaesarCipher(Byte shift, String alphabet)
 	private readonly string _alphabet = alphabet.ToUpper();
 	private readonly Byte _shift = (Byte)(shift % alphabet.Length);
 	
-	public string Encrypt (String plaintext)
+	public Result<String,Exception> Encrypt (String plaintext)
 	{
-		return CaesarTransform(VerifyString(plaintext), _shift);
+		try {
+			var txt = VerifyString(plaintext);
+			return Result<String, Exception>.CreateSuccess(CaesarTransform(txt, _shift));
+		}
+		catch (Exception ex) { 
+			return Result<String, Exception>.CreateFailure(ex);
+		}
 	}
 
 	public string Decrypt (String ciphertext)
@@ -33,8 +39,8 @@ public class CaesarCipher(Byte shift, String alphabet)
 		var upperCaseText = text.ToUpper().ReplaceLineEndings(" ");
 		var invalidChars = upperCaseText.Where(c => !_alphabet.Contains(c));
 		if (invalidChars.Any()) {
-			//todo: свой класс исключений
-			throw new Exception($"Строка {upperCaseText} содержит неподдерживаемые символы");
+			var msg = $"Строка {upperCaseText} содержит неподдерживаемые символы";
+			throw new BadTextException(msg);
 		}
 		return upperCaseText;
 	}

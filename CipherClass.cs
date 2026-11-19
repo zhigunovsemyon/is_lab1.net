@@ -1,6 +1,5 @@
 ﻿namespace is_lab1.net;
 using LabExceptions;
-using System.Text;
 
 public class CipherClass
 {
@@ -24,7 +23,7 @@ public class CipherClass
 		_alphabet = alphabet;
 	}
 
-	public string Encrypt(string plaintext)
+	public Result<String, Exception> Encrypt (string plaintext)
 	{
 		return _caesar.Encrypt(plaintext);
 	}
