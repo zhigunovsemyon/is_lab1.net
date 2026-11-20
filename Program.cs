@@ -1,5 +1,5 @@
 ﻿namespace is_lab1.net;
-
+using LabExceptions;
 /*
  * Задание:
  * Во всех вариантах необходимо разработать программы для шифрования и
@@ -21,7 +21,7 @@ internal static class Program
 		var args = Environment.GetCommandLineArgs();
 		var execname = args[0];
 		if (args.Length != 5) {
-			Program.Usage(execname);
+			Usage(execname);
 			return ExitFailure;
 		}
 
@@ -30,30 +30,18 @@ internal static class Program
 		var keyFile = args[3];
 		var outputFile = args[4];
 
-		var mode = Program.GetMode(modename);
-		if (mode == Mode.InvalidMode) {
-			Console.WriteLine("{0} не является действующим режимом", modename);
-			Program.Usage(execname);
-			return ExitFailure;
-		}
+		try {
+			var mode = GetMode(modename);
+			var inputFileContent = ReadFile(inputFile);
+			var keyFileContent =  ReadFile(keyFile);
 
-		var readFileReturn = Program.ReadFile(inputFile);
-		if (!readFileReturn) {
-			Program.DisplayFileError(inputFile, readFileReturn.Error);
-			return ExitFailure;
+			Console.WriteLine("Входной файл:\n{0}", inputFileContent);
+			Console.WriteLine("Ключ:\n{0}", keyFileContent);
+			return ExitSuccess;
 		}
-		var inputFileContent = readFileReturn.Value ?? "";
-
-		var keyFileReturn = Program.ReadFile(inputFile);
-		if (!keyFileReturn) {
-			Program.DisplayFileError(keyFile, keyFileReturn.Error);
-			return ExitFailure;
+		catch (Exception ex) { 
+			return EndWithError(ex);
 		}
-		var keyFileContent = keyFileReturn.Value ?? "";
-
-		Console.WriteLine("Входной файл:\n{0}", inputFileContent);
-		Console.WriteLine("Ключ:\n{0}", keyFileContent);
-		return ExitSuccess;
 	}
 
 	private static void Usage(string execname)
@@ -61,10 +49,12 @@ internal static class Program
 		Console.WriteLine("{0} (d|e) input_file key_file output_file", execname);
 	}
 
+	
+	/// <exception cref="InvalidModeException">Неправильно заданный режим работы</exception>
 	private static Mode GetMode(string modename)
 	{
 		if (modename.Length != 1) {
-			return Mode.InvalidMode;
+			throw new InvalidModeException($"{modename} не является действующим режимом");
 		}
 
 		char modechar = modename[0];
@@ -72,28 +62,28 @@ internal static class Program
 		{
 			'd' or 'D' => Mode.DecryptMode,
 			'e' or 'E' => Mode.EncryptMode,
-			_ => Mode.InvalidMode,
+			_ => throw new InvalidModeException($"{modechar} не является действующим режимом"),
 		};
 	}
-
-	private static Result<string, Exception> ReadFile(string path)
+	
+	/// <exception cref="BadFileException">Ошибка при чтении файла</exception>
+	private static String ReadFile(string path)
 	{
 		try {
 			using var sr = new StreamReader(path);
-			var result = sr.ReadToEnd();
-			return Result<string, Exception>.CreateSuccess(result);
+			return sr.ReadToEnd();
 		}
 		catch (Exception e) {
-			return Result<string, Exception>.CreateFailure(e);
+			throw new BadFileException($"Ошибка при чтении файла {path}", e);
 		}
 	}
 
-	private static void DisplayFileError(string path, Exception? exception)
+	private static int EndWithError(Exception? exception)
 	{
-		Console.WriteLine("Ошибка при чтении файла {0}:", path);
 		while (exception != null) {
 			Console.WriteLine(exception.Message);
 			exception = exception.InnerException;
 		}
+		return ExitFailure;
 	}
 }

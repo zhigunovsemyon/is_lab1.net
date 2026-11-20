@@ -23,7 +23,9 @@ public class CipherClass
 		_alphabet = alphabet;
 	}
 
-	public Result<String, Exception> Encrypt (string plaintext)
+
+	/// <exception cref="BadTextException">При символах, отсутствующих в алфавите</exception>
+	public String Encrypt (string plaintext)
 	{
 		return _caesar.Encrypt(plaintext);
 	}

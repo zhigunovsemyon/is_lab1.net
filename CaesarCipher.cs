@@ -6,16 +6,11 @@ public class CaesarCipher(Byte shift, String alphabet)
 {
 	private readonly string _alphabet = alphabet.ToUpper();
 	private readonly Byte _shift = (Byte)(shift % alphabet.Length);
-	
-	public Result<String,Exception> Encrypt (String plaintext)
+
+	/// <exception cref="BadTextException">При символах, отсутствующих в алфавите</exception>
+	public String Encrypt (String plaintext)
 	{
-		try {
-			var txt = VerifyString(plaintext);
-			return Result<String, Exception>.CreateSuccess(CaesarTransform(txt, _shift));
-		}
-		catch (Exception ex) { 
-			return Result<String, Exception>.CreateFailure(ex);
-		}
+		return CaesarTransform(VerifyString(plaintext), _shift);
 	}
 
 	public string Decrypt (String ciphertext)
@@ -34,6 +29,7 @@ public class CaesarCipher(Byte shift, String alphabet)
 		return sb.ToString();
 	}
 
+	/// <exception cref="BadTextException">При символах, отсутствующих в алфавите</exception>
 	private string VerifyString(String text)
 	{
 		var upperCaseText = text.ToUpper().ReplaceLineEndings(" ");
